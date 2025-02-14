@@ -1,15 +1,23 @@
 import duckdb
+import pandas as pd
 
 
 class Database:
     def __init__(self, database: str) -> None:
         self.con = duckdb.connect(database=database, read_only=False)
 
-    def insert_data(self, name: str, file: str) -> None:
+    def insert_csv_data(self, name: str, file: str) -> None:
         self.con.execute(f"""
         CREATE OR REPLACE TABLE {name} AS
         SELECT * FROM read_csv('{file}', header = true, all_varchar = true);
         """)
+
+    def insert_df_data(self, name: str, df: pd.DataFrame) -> None:
+        self.con.execute(f"""
+        CREATE OR REPLACE TABLE {name} AS
+        SELECT * FROM df;
+        """)
+
 
     def search_function(self, name: str) -> bool:
         function_check = f"""

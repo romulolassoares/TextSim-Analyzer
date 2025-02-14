@@ -1,6 +1,7 @@
 from src.modules.database import Database
 import jellyfish
 from rapidfuzz import fuzz, utils
+import pandas as pd
 
 def calculate_jaro(a: str, b: str) -> float:
     result = jellyfish.jaro_winkler_similarity(a, b)
@@ -52,7 +53,7 @@ class CompareData:
 
         print("Completed")
 
-    def report(self, join_columns: list, compare_col: str, filter :float = 0) -> None:
+    def report(self, join_columns: list, compare_col: str, filter :float = 0) -> pd.DataFrame:
         all_columns = join_columns
         all_columns.append(compare_col)
 
@@ -67,8 +68,15 @@ class CompareData:
         """
 
         df = self.db.execute(query).df()
-        df.to_csv("compare_data.csv", index=False)
+        return df
+        # df.to_csv("compare_data.csv", index=False)
 
     def register_functions(self):
-        self.db.register_function("calculate_jaro", calculate_jaro)
-        self.db.register_function("calculate_wratio", calculate_wratio)
+        try:
+            self.db.register_function("calculate_jaro", calculate_jaro)
+        except Exception as e:
+            print(e)
+        try:
+            self.db.register_function("calculate_wratio", calculate_wratio)
+        except Exception as e:
+            print(e)

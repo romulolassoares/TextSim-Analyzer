@@ -27,4 +27,4 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           push: true
-          tags: romulolass/textsim_analyser:latest
+          tags: romulolass/textsim_analyser:${{ github.sha }}

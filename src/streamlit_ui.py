@@ -4,8 +4,8 @@ import pandas as pd
 import streamlit as st
 from streamlit.runtime.uploaded_file_manager import UploadedFile
 
-from src.modules.compare_data import CompareData
-from src.modules.database import Database
+from modules.compare_data import CompareData
+from modules.database import Database
 
 
 def upload_files() -> tuple[UploadedFile, UploadedFile]:

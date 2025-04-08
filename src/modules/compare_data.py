@@ -1,4 +1,4 @@
-from src.modules.database import Database
+from modules.database import Database
 import jellyfish
 from rapidfuzz import fuzz, utils
 import pandas as pd

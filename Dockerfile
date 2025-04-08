@@ -7,4 +7,4 @@ COPY . .
 
 RUN poetry install --no-root
 
-ENTRYPOINT ["poetry", "run", "python", "-m", "main"]
+ENTRYPOINT ["poetry", "run", "python", "main.py"]

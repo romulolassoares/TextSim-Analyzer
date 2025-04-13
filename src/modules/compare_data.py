@@ -53,9 +53,10 @@ class CompareData:
 
         print("Completed")
 
-    def report(self, join_columns: list, compare_col: str, filter :float = 0) -> pd.DataFrame:
+    def report(self, join_columns: list, compare_col: str, key_column: str, filter :float = 0) -> pd.DataFrame:
         all_columns = join_columns
         all_columns.append(compare_col)
+        all_columns.append(key_column)
 
         select = ", ".join(f"{col}_tb1, {col}_tb2" for col in all_columns)
         select = f"{select}, jaro_winkler, wratio"

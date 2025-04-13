@@ -8,19 +8,36 @@ from modules.compare_data import CompareData
 from modules.database import Database
 
 
-def upload_files() -> tuple[UploadedFile, UploadedFile]:
+def file_separator():
+    separators = [",",";","|","§"]
+    option = st.segmented_control(
+        label="File separator",
+        options=separators,
+        selection_mode="single",
+        default=separators[0],
+    )
+    return option
+
+def upload_files() -> tuple[UploadedFile, UploadedFile, str]:
     st.header("Upload files")
     file1 = st.file_uploader(label="Upload file1", type=["csv"], accept_multiple_files=False, key="file1")
     file2 = st.file_uploader(label="Upload file2", type=["csv"], accept_multiple_files=False, key="file2")
-    return file1, file2
+    separator = file_separator()
+    return file1, file2, separator
 
 
-def process_files(file1: UploadedFile, file2: UploadedFile) -> tuple[pd.DataFrame, pd.DataFrame]:
+def process_files(file1: UploadedFile, file2: UploadedFile, sep: str) -> tuple[pd.DataFrame, pd.DataFrame]:
+    if sep is None:
+        sep = ","
     if file1 is not None and file2 is not None:
-        file1_df = pd.read_csv(file1, dtype=str)
-        file2_df = pd.read_csv(file2, dtype=str)
-        st.toast("Files Uploaded!!!")
-        return file1_df, file2_df
+        try:
+            file1_df = pd.read_csv(file1, dtype=str, sep=sep)
+            file2_df = pd.read_csv(file2, dtype=str, sep=sep)
+            st.toast("Files Uploaded!!!")
+            return file1_df, file2_df
+        except Exception as e:
+            st.error(e)
+            return pd.DataFrame(), pd.DataFrame()
     return pd.DataFrame(), pd.DataFrame()
 
 
@@ -66,8 +83,8 @@ def execute_comparison(db: Database, join_columns: list[str], compare_column: st
 
 def main() -> None:
     st.title("Web GUI - TextSim Analyzer")
-    file1, file2 = upload_files()
-    file1_df, file2_df = process_files(file1, file2)
+    file1, file2, separator = upload_files()
+    file1_df, file2_df = process_files(file1, file2, separator)
     if not file1_df.empty and not file2_df.empty:
         db = setup_database(file1_df, file2_df)
         tb1_cols = validate_tables(db)
